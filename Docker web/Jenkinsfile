@@ -1,0 +1,135 @@
+pipeline {
+    agent any
+
+    // docker hub data
+    environment {
+        dockerHubRegistry = 'xoodb/web_django'
+        dockerHubRegistryCredential = 'docker-hub'
+        gitEmail = 'xodbs316@gmail.com'
+        gitName = 'xoodb'
+    }
+    
+    stages {
+        // git clone check
+        stage('Prepare') {
+            steps {
+                slackSend (color: '#00FFFF', message: "Django - #${env.BUILD_NUMBER} start Test")
+                deleteDir()
+                checkout scm
+            }
+            post {
+                    success {
+                        echo 'Repository clone success'
+                    }
+                    failure {
+                        echo 'Repository clone failure'
+                        slackSend (color: '#FF0000', message: "GitHub Repository clone Failure")
+                    }
+            }
+        }
+
+        stage('Test') {
+            // 코드 실행 테스트
+            steps {
+                dir('./Django') {
+                    sh '''
+                    pip install -r requirements.txt
+                    python3 manage.py test
+                    '''
+                }
+            }
+            post {
+                    success {
+                        echo 'Django test Success!'
+                        slackSend (color: '#00FF00', message: "Django test SUCCESS")
+                    }
+                    failure {
+                        echo 'Django test failure!'
+                        slackSend (color: '#FF0000', message: "Django test Failure")
+                    }
+            }
+        }
+
+        stage('Docker build') {
+            steps {
+                // 2가지 태그로 도커 이미지 생성
+                sh "sudo docker build . -t ${dockerHubRegistry}:${currentBuild.number}"
+                sh "sudo docker build . -t ${dockerHubRegistry}:latest"
+            }
+
+            post {
+                success {
+                    echo "Image Build successful"
+                    slackSend (color: '#00FF00', message: "Docker Image ${dockerHubRegistry} build SUCCESS")
+                }
+
+                failure {
+                    echo "Image Build failed"
+                    slackSend (color: '#FF0000', message: "Docker Image ${dockerHubRegistry} build FAILED")
+                }
+            }
+        }
+
+        stage('Docker Image Push') {
+            steps {
+                // 젠킨스에 등록한 크레덴셜로 도커 허브에 이미지 푸시
+                withDockerRegistry(credentialsId: dockerHubRegistryCredential, url: "https://index.docker.io/v1/") {
+                    sh "sudo docker push ${dockerHubRegistry}:${currentBuild.number}"
+                    sh "sudo docker push ${dockerHubRegistry}:latest"
+                    // 대기시간 5초
+                    sleep 5
+                } 
+            }
+        
+            post {
+                // 이미지 Push 성공/실패시 생성한 이미지 삭제후 slack에 notify
+                failure {
+                    echo 'Docker Image Push failure'
+                    sh "sudo docker rmi ${dockerHubRegistry}:${currentBuild.number}"
+                    sh "sudo docker rmi ${dockerHubRegistry}:latest"
+                    slackSend (color: '#FF0000', message: "Docker Image Push FAILED to Docker Hub - '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                }
+                success {
+                    echo 'Docker Image Push success'
+                    sh "sudo docker rmi ${dockerHubRegistry}:${currentBuild.number}"
+                    sh "sudo docker rmi ${dockerHubRegistry}:latest"
+                    slackSend (color: '#00FF00', message: "Docker Image Push SUCCESS to Docker Hub - '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                }
+            }
+        }
+
+        stage('K8S Manifest Update') {
+            steps {
+                // 생성한 도커 이미지 manifest 파일 속 image:tag 변경 후 push
+                deleteDir()
+                withCredentials([gitUsernamePassword(credentialsId: 'github-token', gitToolName: 'Default')]) {
+                    checkout scmGit(branches: [[name: '*/main']], 
+                        extensions: [], 
+                        userRemoteConfigs: [[credentialsId: 'github-token', url: 'https://github.com/xoodb/solar_k8s_manifest.git']])
+                    sh "git config --global user.email ${gitEmail}"
+                    sh "git config --global user.name ${gitName}"
+
+                    sh "sed -i 's#image:.*#image: ${dockerHubRegistry}:${currentBuild.number}#g' app-templates/process/celery-deployment.yaml"
+                    sh "sed -i 's#image:.*#image: ${dockerHubRegistry}:${currentBuild.number}#g' app-templates/django/django-deployment.yaml"
+                    sh "git checkout -b main"
+                    sh "git add ."
+                    sh "git commit -m 'fix : ${dockerHubRegistry} ${currentBuild.number} image versioning'"
+                    sh "git branch -M main"
+                    sh "git push -u origin main"
+                }
+            }
+
+            post {
+                // Manifest파일 업데이트 성공/실패시 slack에 notify
+                failure {
+                echo 'K8S Manifest Update failure'
+                slackSend (color: '#FF0000', message: "K8S Manifest Update FAILED '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                }
+                success {
+                echo 'K8s Manifest Update success'
+                slackSend (color: '#00FF00', message: "K8S Manifest Update SUCCESS '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                }
+            }
+        } 
+    }
+}
