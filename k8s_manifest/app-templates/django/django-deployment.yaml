@@ -22,7 +22,7 @@ spec:
         role: workers
       containers:
         - name: django
-          image: xoodb/web_django:92
+          image: xoodb/web_django:latest
           imagePullPolicy: IfNotPresent
           command: 
             - "gunicorn"
