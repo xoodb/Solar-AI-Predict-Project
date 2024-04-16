@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redis
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+
+spec:
+  project: apps
+  
+  source:
+    repoURL: https://github.com/xoodb/solar_k8s_manifest.git
+    targetRevision: main
+    path: app-templates/redis
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: web-apps
+  
+  syncPolicy:
+    automated: 
+      prune: true 
+      selfHeal: true   
+    syncOptions:
+      - CreateNamespace=true
