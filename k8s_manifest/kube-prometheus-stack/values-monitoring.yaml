@@ -1,0 +1,20 @@
+alertmanager:
+  nodeSelector: { role : builders }
+
+prometheus:
+  nodeSelector: { role : builders }
+
+grafana:
+  defaultDashboardsTimezone: Asia/Seoul
+  adminPassword: prom-operator
+  nodeSelector: { role : builders }
+  service:
+    type: NodePort
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: alb
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80,"HTTPS":443}]'
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:422837884582:certificate/c2f8cb02-5d36-4067-a2dc-3530c1803295
+      alb.ingress.kubernetes.io/tags: Environment=dev,Name=grafana
