@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: nginx-serivce
   namespace: web-apps
-spec:
+spec: 
   type: NodePort
   ports:
     - port: 80
