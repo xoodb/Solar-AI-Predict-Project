@@ -1,0 +1,7 @@
+FROM nginx:latest
+
+WORKDIR /nginx_file
+
+ENV TZ=Asia/Seoul
+
+COPY ./static .
