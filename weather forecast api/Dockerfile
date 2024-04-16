@@ -12,4 +12,4 @@ RUN pip install -r requirements.txt
 
 ENTRYPOINT ["python"]
 
-CMD ["persistent_update/total_run.py"] # set time zone
+CMD ["persistent_update/total_run.py"]
