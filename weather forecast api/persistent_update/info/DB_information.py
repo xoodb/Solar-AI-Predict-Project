@@ -1,0 +1,5 @@
+DB_VERSION = "DB 버전"
+DB_IP = "DB 주소"
+DB_ID = "사용자 ID"
+DB_PW = "사용자 PW"
+DB_DATABASE = "프로젝트명"
