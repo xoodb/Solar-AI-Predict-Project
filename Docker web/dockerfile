@@ -1,0 +1,15 @@
+FROM python:3.11.8
+
+ENV PYTHONUNBUFFERED 1 
+
+WORKDIR /WEB
+
+COPY . .
+
+WORKDIR /WEB/SAPS
+
+RUN pip install -r requirements.txt
+
+CMD ["python", "set_timezone.py"]
+
+EXPOSE 8000
