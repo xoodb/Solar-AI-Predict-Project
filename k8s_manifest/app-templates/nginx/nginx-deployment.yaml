@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: web-apps
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      pod: nginx
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        pod: nginx
+    spec:
+      nodeSelector:
+        role: workers
+      containers:
+        - name: nginx
+          image: xoodb/nginx:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /etc/nginx/nginx.conf # mount nginx-conf volumn to /etc/nginx/nginx.conf
+              readOnly: true
+              name: config
+              subPath: nginx.conf
+      volumes:
+        - name: config
+          configMap:
+            name: nginx-conf
+            items:
+              - key: nginx-main.conf
+                path: nginx.conf
+      restartPolicy: Always
