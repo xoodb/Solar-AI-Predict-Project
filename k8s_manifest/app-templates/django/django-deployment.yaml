@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django
+  namespace: web-apps
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      pod: django
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        pod: django
+    spec:
+      nodeSelector:
+        role: workers
+      containers:
+        - name: django
+          image: xoodb/web_django:92
+          imagePullPolicy: IfNotPresent
+          command: 
+            - "gunicorn"
+            - "config.wsgi:application"
+            - "--bind"
+            - "0.0.0.0:8000"
+          env:
+            - name: REDIS_HOST
+              value: redis-service
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_URL
+              value: redis://redis-service:6379/
+          envFrom:
+            - secretRef:
+                name: db-secret
+          ports:
+            - containerPort: 8000
