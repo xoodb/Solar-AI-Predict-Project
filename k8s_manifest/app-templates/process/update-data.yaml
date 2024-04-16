@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: update-data
+spec:
+  schedule: "10 */3 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          nodeSelector:
+            role: workers
+          containers:
+          - name: python
+            image: xoodb/update_python:latest
+            imagePullPolicy: IfNotPresent
+          restartPolicy: OnFailure
