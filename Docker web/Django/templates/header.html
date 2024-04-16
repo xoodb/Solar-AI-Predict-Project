@@ -1,0 +1,22 @@
+<div class="saps_header">
+    <div style="float: left; margin-left:10px; cursor: pointer;" onclick="location.href='{% url 'home:home' %}';">
+        <h1 class="saps_logo" style="margin:0px">
+            S.A.P.S
+        </h1>
+    </div>
+    <div class="saps_header_navbar", style="float: right;">
+        <a href="{% url 'home:home' %}" class="saps_header_nav">
+            <span>홈</span>
+        </a>
+        {% if not user.is_authenticated %}
+            <a href="{% url 'accountapp:login' %}" class="btn_style">
+                <span>시작하기</span>
+            </a>
+        {% else %}
+            <a href="{% url 'dashboardapp:main' %}" class="btn_style">
+                <span>시작하기</span>
+            </a>
+        {% endif %}
+    </div>
+    <div style="clear: both;"></div>
+</div>

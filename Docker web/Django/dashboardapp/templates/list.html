@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<h2>DB 불러오기</h2>
+<a href="{% url 'accountapp:logout' %}">로그아웃</a>
+<a href="{% url 'accountapp:detail' pk=request.user%}">사용자 정보</a>
+{% if request.user.is_authenticated %}
+    <p>Username -->  {{ request.user.id }}
+    <p>Password -->  {{ request.user.password }}</p>
+    <p>User is logged in :)</p>
+    <table border="1">
+    <tr>
+        <th>id</th><th>장치 id</th><th>지역코드</th>
+    </tr>
+    {% for d in device %}
+    <tr>
+        <td>{{d.id}}</td>
+        <td><a href="{% url 'dashboardapp:chart' device_id=d.device_id %}">{{d.device_id}}</a></td>
+        <td>{{d.location_code}}</td>
+    </tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>User is not logged in :(</p>
+{% endif %}
+</body>
+</html>

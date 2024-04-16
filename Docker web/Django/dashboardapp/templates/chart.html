@@ -1,0 +1,104 @@
+{% extends 'dashboard_base.html' %}
+{% load bootstrap4 %}
+
+
+{% block content %}
+    <p class="text-center fw-lighter">최근 한달의 데이터를 제공합니다.<br>[데이터 제공에는 시간이 걸릴 수 있습니다]</p>
+    <div class="table_area float-end">
+        <div class="card" style="border-radius: 25px;">
+            <div class="card-body p-4">
+                <h5 class="text-center" style="font-family: 'Sunflower', sans-serif;">{{my_device.location_code.city}} {{my_device.location_code.distinct}} {{my_device.location_code.area}} 날씨</h5>
+                <div class="d-flex justify-content-around text-center pb-3 pt-2">
+                    {% for w in weather %}
+                    <div class="flex-column">
+                        <p class="mb-0"><strong>{{ w.date|slice:"4:6" }}월 {{ w.date|slice:"6:8" }}일</strong></p>
+                        {% if w.rainfall > 0 %}
+                            <i class="bi bi-cloud-rain-fill fs-3 mb-3 text-info"></i>
+                        {% elif w.cloud > 30 %}
+                            <i class="bi bi-cloud-fill fs-3 mb-3 text-secondary"></i>
+                        {% else %}
+                            <i class="bi bi-sun-fill fs-3 mb-3 text-danger"></i>
+                        {% endif %}
+                        <p class="mb-0">최고 : {{ w.max_temp }}°C</p>
+                        <p class="mb-0">최저 : {{ w.min_temp }}°C</p>
+                        <p class="mb-0">구름량 : {{ w.cloud }}%</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div style="width:100%; height:200px;" class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <th>측정일</th>
+                    <th>실측정값(W)</th>
+                    <th>예측값(W)</th>
+                    <th>예측정확도(%)</th>
+                </thead>
+                <tbody>
+                    {% for entry in queryset reversed  %}
+                    <tr>
+                        <td>{{ entry.measure_date }}</td>
+                        <td>{{ entry.measure }}</td>
+                        <td>{{ entry.predictive_measure }}</td>
+                        <td>{{ entry.measurement_accuracy }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="chart_area float-start">
+        <figure class="highcharts-figure">
+        <div id="container"></div>
+        <!-- {% for entry in queryset %}{{ entry.measure }}{% if not forloop.last %}, {% endif %}{% endfor %} -->
+        </figure>
+    </div>
+    <div style="clear:both"></div>
+    <script>
+          Highcharts.chart('container', {
+            colors: ['#7595F5', '#F65757'],
+            chart: {
+              type: 'spline'
+            },
+            title: {
+              text: '{{device_id}}'
+            },
+            xAxis: {
+              categories: [
+                {% for entry in queryset %}'{{ entry.measure_date }}',{% if not forloop.last %} {% endif %}{% endfor %}
+              ]
+            },
+            yAxis: {
+              title: {
+                text: '발전량'
+              },
+              labels: {
+                formatter: function () {
+                  return this.value + 'w';
+                }
+              }
+            },
+            tooltip: {
+              crosshairs: true,
+              shared: true
+            },
+            plotOptions: {
+              spline: {
+                marker: {
+                  radius: 4,
+                  lineColor: '#757575',
+                  lineWidth: 1
+                }
+              }
+            },
+             series: [{
+                    name: '실측정값',
+                    data: [{% for entry in queryset %}{{ entry.measure }}{% if not forloop.last %}, {% endif %}{% endfor %}]
+                }, {
+                    name: '예측값',
+                    data: [{% for entry in queryset %}{{ entry.predictive_measure }}{% if not forloop.last %}, {% endif %}{% endfor %}]
+                }]
+            });
+        </script>
+{% endblock %}

@@ -1,0 +1,2 @@
+AccuWeather_API = 'myvLuEr4eJai0AK4uEmnGAhIJfGwgKq3'
+Data_API = "nkCzHSAOh8pDx75l1gtxtBvR90OpgFgxCWGH3pDfVYdqM78rWLNzHgkFHkDtyPeK2t/U0SSm07boJxhrzRLaXg=="

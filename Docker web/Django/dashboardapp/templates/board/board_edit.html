@@ -1,0 +1,24 @@
+{% extends 'dashboard_base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+<div style="text-align: center; max-width: 720px; margin: 4rem auto;">
+    {% if is_writer%}
+        <h3>게시글 수정</h3>
+        <form method="POST">
+          {% csrf_token %}
+            {% for f in form %}
+            <div>
+                {{f}}
+            </div>
+            {% endfor %}
+            {% if error %}
+            {{ error }}
+            {% endif %}
+          <button type="submit">수정</button>
+        </form>
+    {% else %}
+    <h1>비정상적인 접근입니다.</h1>
+    {% endif %}
+</div>
+{% endblock %}

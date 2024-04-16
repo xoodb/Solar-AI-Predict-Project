@@ -1,0 +1,21 @@
+{% extends 'dashboard_base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+<div style="max-width: 720px; margin: 4rem auto;">
+    <h1>{{ board.title }}</h1>
+    <p class="fw-lighter fst-italic">{{ board.write_date }} {{board.writer}}작성</p>
+    <div style="min-height: 300px;">
+        {{ board.content|safe }}
+    </div>
+    {% if is_writer or request.user.is_superuser %}
+        <form class="float-end" action="{% url 'dashboardapp:delete' board_type=board.board_type board_id=board.board_id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">삭제</button>
+        </form>
+        <a href="{% url 'dashboardapp:edit' board_id=board.board_id %}" class="mx-2 btn btn-secondary float-end">수정</a>
+    {% endif %}
+    <a href="{{ previous_url }}" class="btn btn-primary float-start">목록</a>
+</div>
+<div class="float-none"></div>
+{% endblock %}

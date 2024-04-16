@@ -1,0 +1,96 @@
+{% extends 'dashboard_base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+<div style="max-width: 720px; margin: 4rem auto;">
+    <div style="max-height:300px;">
+        <form method="post">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            지역
+            <div class="row mb-3">
+                <div class="col-4">
+                    <select class="form-select" id="city" onchange="updateDistricts()" name="city">
+                        <option value="" selected>시/도 선택</option>
+                        <option value="서울특별시">서울특별시</option>
+                        <option value="부산광역시">부산광역시</option>
+                        <option value="대구광역시">대구광역시</option>
+                        <option value="인천광역시">인천광역시</option>
+                        <option value="광주광역시">광주광역시</option>
+                        <option value="대전광역시">대전광역시</option>
+                        <option value="울산광역시">울산광역시</option>
+                        <option value="세종특별자치시">세종특별자치시</option>
+                        <option value="경기도">경기도</option>
+                        <option value="강원도">강원도</option>
+                        <option value="충청북도">충청북도</option>
+                        <option value="충청남도">충청남도</option>
+                        <option value="전라북도">전라북도</option>
+                        <option value="전라남도">전라남도</option>
+                        <option value="경상북도">경상북도</option>
+                        <option value="경상남도">경상남도</option>
+                        <option value="제주특별자치도">제주특별자치도</option>
+                    </select>
+                </div>
+                <div class="col-4">
+                    <select class="form-select" id="district" onchange="updateDong()" name="district" disabled>
+                      <option value="" selected>구/군 선택</option>
+                    </select>
+                </div>
+                <div class="col-4">
+                    <select class="form-select" id="dong" onchange="updateLocationCode()" name="dong" disabled>
+                      <option value="" selected>동 선택</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary float-end">저장하기</button>
+        </form>
+    </div>
+</div>
+
+<script language="JavaScript">
+function updateDistricts() {
+    var citySelect = document.getElementById('city');
+    var districtSelect = document.getElementById('district');
+    var townSelect = document.getElementById('town');
+
+    var city = citySelect.value;
+
+    // AJAX 요청을 통해 선택된 시/도에 해당하는 구/군 목록을 가져옴
+    var url = '/dashboard/device/get_districts/?city=' + encodeURIComponent(city);
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+          // 응답을 받은 후 선택 상자 업데이트
+          districtSelect.innerHTML = xhr.responseText;
+          districtSelect.disabled = false;
+          townSelect.innerHTML = '<option value="">동 선택</option>';
+          townSelect.disabled = true;
+        }
+    };
+    xhr.send();
+}
+
+function updateDong() {
+    var citySelect = document.getElementById('city');
+    var districtSelect = document.getElementById('district');
+    var dongSelect = document.getElementById('dong');
+
+    var locationCode = document.getElementById('location_code');
+
+    var city = citySelect.value;
+    var district = districtSelect.value;
+
+    var url = '/dashboard/device/get_dong/?city=' + encodeURIComponent(city) + '&district=' + encodeURIComponent(district);
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+          dongSelect.innerHTML = xhr.responseText;
+          dongSelect.disabled = false;
+        }
+    };
+    xhr.send();
+}
+</script>
+{% endblock %}

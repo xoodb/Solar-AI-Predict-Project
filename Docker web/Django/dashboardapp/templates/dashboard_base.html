@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+{% include 'dashboard_head.html' %}
+
+<body>
+    <div class="saps_header">
+        <label for="menu-btn" style="float: left;">
+            <div style="margin-left:10px; cursor: pointer;">
+                <h1 class="saps_logo" style="margin:0px">
+                    S.A.P.S
+                </h1>
+            </div>
+        </label>
+        <div class="saps_header_navbar", style="float: right;">
+            <span style="margin-right: 0.5rem;">
+                {{request.user.name}}님 로그인
+            </span>
+            <a href="{% url 'accountapp:detail' pk=request.user%}" class="saps_header_nav">
+                <span> 정보수정 </span>
+            </a>
+            <a href="{% url 'accountapp:logout' %}" class="saps_header_nav" style="margin-right: 1rem;">
+                <span> 로그아웃 </span>
+            </a>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+    <hr>
+
+    <!-- 사이드바 -->
+    <input id="menu-btn" type="checkbox">
+    <div class="menu-content">
+        <ul class="mb-1 list-group">
+            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#device-collapse" aria-expanded="true">
+                <i class="bi bi-sun"></i>&nbsp; 등록된 기기 &nbsp;
+            </button>
+            <div class="collapse show" id="device-collapse">
+                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                    {% if device %}
+                        {% for d in device %}
+                            <li><a href="{% url 'dashboardapp:chart' device_id=d.device_id %}" class="link-dark d-inline-flex text-decoration-none rounded">{{d.device_id}}</a></li>
+                        {% endfor %}
+                    {% else %}
+                        {% for d in object_list %}
+                            <li><a href="{% url 'dashboardapp:chart' device_id=d.device_id %}" class="link-dark d-inline-flex text-decoration-none rounded">{{d.device_id}}</a></li>
+                        {% endfor %}
+                    {% endif %}
+                    <br>
+                    <li><a href="{% url 'dashboardapp:device' %}" class="link-dark d-inline-flex text-decoration-none rounded">기기 관리하기</a></li>
+                </ul>
+          </div>
+        </ul>
+        <ul class="mb-1 list-group">
+            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+                <i class="bi bi-megaphone"></i>&nbsp; 이용안내 &nbsp;
+            </button>
+            <div class="collapse show" id="home-collapse">
+                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                    <li><a href="{% url 'dashboardapp:notice' %}" class="link-dark d-inline-flex text-decoration-none rounded">공지사항</a></li>
+                    <!--<li><a href="{% url 'dashboardapp:post' %}" class="link-dark d-inline-flex text-decoration-none rounded">자유게시판</a></li>-->
+                </ul>
+          </div>
+        </ul>
+    </div>
+    {% block content %}
+    {% endblock %}
+
+    <hr>
+
+    {% include 'footer.html' %}
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+    {% load static %}
+    {% load bootstrap4 %}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no user-scalable=yes">
+        <title>S.A.P.S</title>
+
+        <!-- BOOTSTRAP LINK -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
+
+        <!-- GOOGLE FONT LINK -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+        <!--     GOOGLE MATERIAL ICONS     -->
+        <link href="https://fonts.googleapis.com/css2?family=Material+Icons"
+      rel="stylesheet">
+
+        <!--  DEFAULT CSS LINK  -->
+        <link rel="stylesheet" type="text/css" href="{% static 'home.css' %}">
+
+        <style>
+            body, h1, h2, h3, h4, h5, h6, p, span {
+            font-family: 'Noto Sans KR';
+            }
+        </style>
+    </head>
+    <body>
+        <header class="">
+            <div class="headerWrap">
+                <h1 class="fs-3">S.A.P.S</h1>
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'accountapp:login' %}" class="btn_style">
+                        <span>시작하기</span>
+                    </a>
+                {% else %}
+                    <a href="{% url 'dashboardapp:main' %}" class="btn_style">
+                        <span>시작하기</span>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="progressWrap">
+                <div class="bar"></div>
+            </div>
+        </header>
+        {% load static %}
+        <div class="coverWrap">
+            <div class="dimd"></div>
+            <div class="coverTitle">
+                <h1>Solar-energy A.I. Predict System</h1>
+                <p>태양광 발전량 인공지능 예측 시스템</p>
+            </div>
+        </div>
+        <div class="contWrap">
+            <div class="contentInnerWrap">
+                <h4>S.A.P.S란?</h4>
+                <p>
+                    &nbsp지금과 같은 지구온난화 상황에 대표적인 친환경 에너지 발전 및 기술 중에서 상용화가 잘되어 있는 태양광 발전을
+                    날씨예보에 근거하여 태양광 예측 발전량을 제공하고 실 측정량과 차이를 계산해주는 프로그램입니다.
+                </p>
+                <p>
+                    &nbsp실 측정량과의 차이를 줄이기 위해 A.I에 알고리즘을 학습시켜 신뢰성 있는 예측값을 제공하며 누적된 전기생산량과 평균 측정량을 제공해주며,
+                    이를 바탕으로 전력소모가 가장 큰 7~8월의 첨두부하(Peak Load) 억제, 사고예측 미리 분석, 불량률 감소, 추가적인 유지 보수 비용 감소 등을
+                    제공할 수 있습니다. 설치된 패널에 간단한 장비를 붙임으로서 예측량을 제공받아, 전기 사용료에 대한 사용자의 부담을 덜 수 있게 도와줍니다.
+                </p>
+            </div>
+        </div>
+        <script>
+            const header = document.querySelector("header");
+            const progressBar = document.querySelector(".bar");
+            const coverTitle = document.querySelector(".coverTitle");
+            const coverWrap = document.querySelector(".coverWrap");
+            const dimd = coverWrap.querySelector(".dimd");
+            const contWrap = document.querySelector(".contWrap");
+
+            let scrollNum = 0;
+            let documentHeight = 0;
+            let per = 0;
+            const coverHeight = window.innerHeight;
+
+            coverWrap.style.height = coverHeight + "px";
+            contWrap.style.marginTop = coverHeight + "px";
+
+            window.addEventListener("scroll", () => {
+                scrollNum = window.scrollY;
+                documentHeight =
+                    document.body.scrollHeight + coverHeight - window.innerHeight;
+
+                per = percent(scrollNum, documentHeight);
+                progressBar.style.width = per + "%";
+
+                if (scrollNum >= coverHeight) {
+                    header.classList.add("fixed");
+                } else {
+                    header.classList.remove("fixed");
+                    coverTitle.style.top = -scrollNum / 5 + "px";
+                    coverWrap.style.backgroundPosition = `center ${-scrollNum / 15}px`;
+                    dimd.style.backgroundColor = `rgba(0, 0, 0, ${0.4 + scrollNum / 1000})`;
+                }
+            });
+
+            const percent = (num, totalNum) => {
+                return ((num / totalNum) * 100).toFixed(0);
+            };
+
+        </script>
+    </body>
+</html>

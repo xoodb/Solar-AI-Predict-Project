@@ -1,0 +1,119 @@
+body {
+    overflow-x: hidden;
+    padding: 0;
+    margin: 0;
+}
+
+header {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 1100;
+}
+
+.headerWrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px;
+}
+.headerWrap h1 {
+    font-family: 'Lobster', cursive;
+    color: #fff;
+}
+
+.btn_style{
+    border: solid #fff;
+    border-radius: 10px;
+    margin-right: 10px;
+    padding: 5px;
+    transition: all 0.5s;
+    text-decoration: none;
+}
+
+.btn_style:hover{
+    background-color: #FF5675;
+    color: #fff;
+}
+
+.btn_style span {
+    color: #fff;
+}
+
+.progressWrap {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #d0d0d0;
+    display: none;
+}
+.bar {
+    width: 0%;
+    height: inherit;
+    position: absolute;
+    z-index: 100;
+    background-color: black;
+    transition: width 0.4s ease-out;
+}
+header.fixed {
+    position: fixed;
+    background: rgba(255, 255, 255, 0.8);
+}
+header.fixed .progressWrap {
+    display: block;
+}
+header.fixed .headerWrap h1, header.fixed .btn_style span {
+    color: #000;
+}
+
+header.fixed .btn_style {
+    border: solid #000;
+}
+
+.coverWrap {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: black url('/static/img/SAPS_bg.jpg') center center / cover no-repeat;
+}
+.dimd {
+    position: absolute;
+    width: 100%;
+    height: inherit;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.coverTitle {
+    position: relative;
+    text-align: center;
+    z-index: 100;
+}
+.coverTitle h1 {
+    color: #fff;
+    line-height: 18px;
+    margin-bottom: 20px;
+}
+.coverTitle p {
+    color: #cecece;
+}
+
+.contWrap {
+    position: relative;
+    z-index: 1000;
+    background-color: #fff;
+}
+.contentInnerWrap {
+    margin: auto;
+    max-width: 600px;
+    min-height: 100vh;
+    padding: 30px;
+}
+h4 {
+    margin-top: 80px;
+    margin-bottom: 30px;
+}

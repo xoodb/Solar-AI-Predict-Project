@@ -1,0 +1,35 @@
+{% extends 'dashboard_base.html' %}
+
+{% block content %}
+
+<div>
+    <div style="text-align: center; max-width: 500px; margin: 4rem auto;">
+
+        <h2 style="font-family: 'NanumSquareB'; margin-bottom: 3rem;">
+            {% if target_user == user %}
+                {{ target_user.name }}님
+            {% else %}
+                <p>비정상적인 접근입니다.</p>
+            {% endif %}
+        </h2>
+        {% if target_user == user %}
+            <i class="bi bi-telephone mb-1"></i>
+            <div class="mb-5">{{ target_user.phone_number }}</div>
+            <i class="bi bi-envelope"></i>
+            <div class="mb-5">
+                {% if target_user.email %}
+                    {{ target_user.email }}
+                {% else %}
+                    메일이 등록되지 않았습니다.
+                {% endif %}
+            </div>
+        {% endif %}
+        {% if target_user == user %}
+            <div>
+                <a href="{% url 'accountapp:update' pk=target_user.id %}" class="btn btn-dark rounded-pill col-3 mt-3">정보수정</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
