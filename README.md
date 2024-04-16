@@ -2,7 +2,7 @@
 기상 예보를 활용하여 일사량을 예측하고 태양광 패널의 발전량을 예측하여 제공하는 서비스입니다.
 
 ## ☁️ [Service Architecture](https://github.com/xoodb/Solar-AI-Predict-Project/tree/main/terraform_file)
-<img src="aws_architectuer.jpg"/>
+<img src="aws_architecture.jpg"/>
 
 ## 🛢 Database
 <img src="Databaes_ERD.jpg"/>
