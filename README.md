@@ -37,5 +37,5 @@
 ### Containerization
 - Docker
 
-###Orchestration
+### Orchestration
 - Kubernetes
