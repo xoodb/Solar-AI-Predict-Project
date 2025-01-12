@@ -33,3 +33,9 @@
 ### Monitoring
 - Prometheus
 - Grafana
+
+### Containerization
+- Docker
+
+Orchestration
+- Kubernetes
